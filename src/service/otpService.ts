@@ -81,7 +81,9 @@ export const verifyOtp = async (req:express.Request,res:express.Response,next:ex
                 await bcrypt.compare(req.body.otp,filteredOtp[filteredOtp.length-1].otp);
 
             if (isEqual){
-                let res_body =  AuthService.generateTokens({phoneNumber:req.body.phoneNumber});
+                let res_body =
+                    AuthService.generateTokens(res,{phoneNumber:req.body.phoneNumber});
+
                 return res.status(200).send(
                     new CustomResponse(
                         200,
