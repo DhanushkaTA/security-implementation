@@ -14,3 +14,9 @@ export interface OtpInterface {
     phoneNumber:string,
     otp:string
 }
+
+export interface ResBody{
+    user:UserInterface,
+    accessToken:string,
+    refreshToken:string
+}

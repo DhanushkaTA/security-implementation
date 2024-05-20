@@ -10,6 +10,7 @@ import process from "process";
 export const sentOTP = async (req:express.Request,res:express.Response,next:express.NextFunction) => {
     try {
 
+        //check phone number is existing
         if (!req.params.phoneNumber){
             return res.status(404).send(
                 new CustomResponse(404,`Phone number not found!`)
@@ -25,11 +26,13 @@ export const sentOTP = async (req:express.Request,res:express.Response,next:expr
         });
 
 
-        let hashOtp:string = await bcrypt.hash(otp,10,);
+        //encoded otp
+        let encodedOtp:string = await bcrypt.hash(otp,10,);
 
+        //create otp object (this must be a otp model after connect db)
         const newOtp:OtpInterface = {
             phoneNumber:req.params.phoneNumber,
-            otp:hashOtp
+            otp:encodedOtp
         }
 
         //save otp with phoneNumber in db
@@ -48,8 +51,10 @@ export const sentOTP = async (req:express.Request,res:express.Response,next:expr
                 to: '+94725337676'
             });
 
+        //otp success msg
         console.log(message)
 
+        //sent success response
         res.status(200).send(
             new CustomResponse(200,`OTP SEND SUCCESSFULLY ${otp}`)
         )
@@ -65,6 +70,7 @@ export const sentOTP = async (req:express.Request,res:express.Response,next:expr
 export const verifyOtp = async (req:express.Request,res:express.Response,next:express.NextFunction) =>{
     try {
 
+        //check otp is existing
         if (!req.body.otp){
             return res.status(404).send(
                 new CustomResponse(404,`OTP not found!`)
@@ -77,22 +83,14 @@ export const verifyOtp = async (req:express.Request,res:express.Response,next:ex
 
         if(filteredOtp.length !== 0){
             //check otp is correct
-            let isEqual =
+            let isEqual: boolean =
                 await bcrypt.compare(req.body.otp,filteredOtp[filteredOtp.length-1].otp);
 
             if (isEqual){
-                let res_body =
-                    AuthService.generateTokens(res,{phoneNumber:req.body.phoneNumber});
 
-                //save to db
-                userArray.push({phoneNumber:req.body.phoneNumber});
+                //generate access token & refresh token send response
+                AuthService.generateResponseWithTokens(res,{phoneNumber:req.body.phoneNumber,role:'user'});
 
-                return res.status(200).send(
-                    new CustomResponse(
-                        200,
-                        "Successful",
-                        res_body
-                    ));
             }else {
                 return res.status(403).send(
                     new CustomResponse(403,`Invalid OTP!! `)
@@ -100,12 +98,13 @@ export const verifyOtp = async (req:express.Request,res:express.Response,next:ex
             }
 
         }else {
+            //we can set otp expired msg
             return res.status(404).send(
                 new CustomResponse(404,`OTP Not found or expired`)
             )
         }
 
-        //we can set otp expired msg
+
 
     }catch (error){
         console.log(error)

@@ -10,8 +10,6 @@ import {CustomResponse} from "./util/custom.response";
 import {userArray} from "./db/db";
 import {UserInterface} from "./type/SchemaTypes";
 
-
-
 let app = express();
 
 app.use(express.static('src/media'))
@@ -26,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //------------------------------------------
 
+//testing data for till connect db
 let users:UserInterface[] = [
     {name:"Ranil",phoneNumber:"0700000000",role:"user",email:"ranil@gmail.com",image:"img-1.png"},
     {name:"Saman",phoneNumber:"0770000000",role:"user",email:"saman@gmail.com",image:"img-1.png"},
@@ -38,13 +37,14 @@ users.map(value => {
 })
 
 
-//------------------------------------------
+//------------------Routes------------------------
 
 app.use('/user',UserRouts)
 
 app.use('/auth',AuthRouts)
 
 // this should be always end of the routs
+//this is for unhandled routes
 app.all('*',(req:express.Request, res: express.Response, next:express.NextFunction) => {
     res.status(404).send(
         new CustomResponse(

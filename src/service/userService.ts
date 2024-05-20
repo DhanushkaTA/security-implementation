@@ -15,22 +15,21 @@ export const register = (req:express.Request,res:express.Response,next:express.N
            )
        }
 
-       console.log(req.params.phoneNumber)
 
+       //check user already registered or not
        let user:UserInterface|null = findUser(req.params.phoneNumber);
 
-       if (user){
-           let res_body =  AuthService.generateTokens(res,user);
-           return res.status(200).send(
-               new CustomResponse(
-                   200,
-                   "Successful",
-                   res_body
-               ));
-       }
 
-       //handle otp service
-       OTPService.sentOTP(req,res,next);
+
+       if (user){
+           //generate access token & refresh token send response
+           AuthService.generateResponseWithTokens(res,user);
+       }else {
+
+           //handle otp service
+           OTPService.sentOTP(req,res,next);
+
+       }
 
    }catch (error){
        console.log(error)
