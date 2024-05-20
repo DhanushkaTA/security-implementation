@@ -2,7 +2,7 @@ import express from "express";
 import {CustomResponse} from "../util/custom.response";
 import otpGenerator from 'otp-generator'
 import {OtpInterface} from "../type/SchemaTypes";
-import {otpArray} from "../db/db";
+import {otpArray, userArray} from "../db/db";
 import bcrypt, {hash} from "bcryptjs"
 import * as AuthService from "./authService";
 import process from "process";
@@ -83,6 +83,9 @@ export const verifyOtp = async (req:express.Request,res:express.Response,next:ex
             if (isEqual){
                 let res_body =
                     AuthService.generateTokens(res,{phoneNumber:req.body.phoneNumber});
+
+                //save to db
+                userArray.push({phoneNumber:req.body.phoneNumber});
 
                 return res.status(200).send(
                     new CustomResponse(

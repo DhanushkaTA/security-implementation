@@ -8,7 +8,6 @@ import express from "express";
 
 export const register = (req:express.Request,res:express.Response,next:express.NextFunction) => {
 
-
    try {
        if (!req.params.phoneNumber){
            return res.status(404).send(
@@ -32,6 +31,7 @@ export const register = (req:express.Request,res:express.Response,next:express.N
 
        //handle otp service
        OTPService.sentOTP(req,res,next);
+
    }catch (error){
        console.log(error)
        return res.status(500).send(
