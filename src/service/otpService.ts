@@ -5,6 +5,7 @@ import {OtpInterface} from "../type/SchemaTypes";
 import {otpArray} from "../db/db";
 import bcrypt, {hash} from "bcryptjs"
 import * as AuthService from "./authService";
+import process from "process";
 
 export const sentOTP = async (req:express.Request,res:express.Response,next:express.NextFunction) => {
     try {
@@ -35,6 +36,18 @@ export const sentOTP = async (req:express.Request,res:express.Response,next:expr
         otpArray.push(newOtp);
 
         //otp sending logic
+        // const accountSid = process.env.SID;
+        // const authToken = process.env.TW_TOKEN;
+        //
+        // const client = require('twilio')(accountSid, authToken);
+        //
+        // client.messages
+        //     .create({
+        //         body: 'Hello from twilio-node',
+        //         to: '+12345678901', // Text your number
+        //         from: '+12345678901', // From a valid Twilio number
+        //     })
+        //     .then((message:any) => console.log(message.sid));
 
         res.status(200).send(
             new CustomResponse(200,`OTP SEND SUCCESSFULLY ${otp}`)
